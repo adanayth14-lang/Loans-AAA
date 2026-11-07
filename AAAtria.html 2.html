@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Panel de gestión de micropréstamos quincenales">
+  <title>AAAtria | Panel de gestión</title>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+:root{--ink:#34283d;--muted:#897b91;--green:#8662a5;--green-light:#f1eafa;--line:#eadfed;--bg:#faf7fb;--white:#fff;--red:#ad617e;--lilac:#eee5f5;--mauve:#b58aa6}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}
+.app-shell{min-height:100vh;display:flex}.sidebar{width:238px;background:linear-gradient(180deg,#4b365c,#60466f);color:#f8f1fb;padding:26px 15px;display:flex;flex-direction:column;flex-shrink:0}.brand{font-size:29px;font-weight:700;letter-spacing:-2px;margin:0 12px 38px}.brand>span{color:#e9c8df}.brand small{display:block;font-size:9px;letter-spacing:2px;color:#dfcce8;margin-top:2px}
+.sidebar nav{display:grid;gap:6px}.nav-link{display:flex;align-items:center;gap:13px;padding:12px;color:#e4d8eb;background:transparent;border:0;border-radius:10px;text-align:left;font-size:14px;transition:background .2s,transform .2s}.nav-link:hover,.nav-link.active{background:#80658f;color:white;transform:translateX(2px)}.nav-link:first-letter{font-size:18px}.sidebar-foot{margin-top:auto;padding:15px 10px;color:#dfcce8;font-size:11px;line-height:1.7}.sidebar-foot span{color:#c5a8d1}
+.main-content{width:min(1500px,100%);padding:34px;margin:0 auto}.topbar{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:25px}.eyebrow{font-size:10px;letter-spacing:1.5px;font-weight:700;color:#849188;margin:0 0 6px}.topbar h1{font-size:27px;margin:0;letter-spacing:-.7px}.top-actions{display:flex;align-items:center;gap:14px}.today{font-size:12px;color:var(--muted)}
+.btn{border:0;border-radius:8px;padding:11px 15px;font-weight:600;font-size:13px}.btn-primary{background:var(--green);color:white}.btn-primary:hover{background:#6f4d8d}.btn-light{background:white;border:1px solid var(--line);color:#5c4a68}.btn-danger{background:#ad617e;color:white}.text-button{background:transparent;color:var(--green);font-size:12px;font-weight:700}
+.view{display:none}.view.active{display:block}.metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:18px}.metric-card,.panel{background:var(--white);border:1px solid var(--line);border-radius:16px;box-shadow:0 5px 20px #60466f0b}.metric-card{padding:20px;display:flex;flex-direction:column;gap:10px}.metric-card span{font-size:12px;color:var(--muted)}.metric-card strong{font-size:25px;letter-spacing:-.8px}.metric-card small{font-size:10px;color:#98a39c}
+.panel{padding:22px;margin-bottom:18px}.panel-heading,.modal-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.panel h2,.modal h2{font-size:17px;margin:0}.two-column{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}.split-stat{display:grid;gap:20px;padding:8px 0}.split-stat>div{display:grid;grid-template-columns:1fr auto;gap:8px}.split-stat span{font-size:12px;color:var(--muted)}.split-stat strong{font-size:13px}.bar{grid-column:1/3;background:#f1e9f3;height:7px;border-radius:20px;overflow:hidden}.bar i{display:block;height:100%;width:20%;background:#bd8daf;border-radius:20px}.bar.green{background:#eee7f4}.bar.green i{background:#8967a6;width:80%}.hint{font-size:11px;color:var(--muted);line-height:1.6;margin:17px 0 0}
+.table-wrap{width:100%;overflow:auto}table{border-collapse:collapse;width:100%;min-width:600px}th,td{padding:13px 10px;border-bottom:1px solid #edf1ee;text-align:left;font-size:12px}th{font-size:10px;color:#7d8b82;font-weight:700}td{color:#39473f}.status{display:inline-block;border-radius:20px;padding:5px 8px;background:#edf5ef;color:#286b47;font-size:10px}.status.danger{background:#fff0ed;color:#a33d32}.empty-state{padding:18px 0;color:#89958d;font-size:12px}
+.collection-row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #edf1ee}.collection-info{flex:1;display:grid;gap:4px}.collection-info strong{font-size:12px}.collection-info small{font-size:10px;color:var(--muted)}.collection-amount{font-size:12px;font-weight:700}.wa-link{font-size:11px;color:#16804d;text-decoration:none;font-weight:700;white-space:nowrap}.wa-link:hover{text-decoration:underline}
+.form-panel{max-width:650px}.form-panel form,.modal form{display:grid;gap:13px}label{display:grid;gap:7px;font-size:12px;font-weight:600;color:#46554b}input,select,textarea{width:100%;border:1px solid #dfe7e1;border-radius:8px;padding:11px 12px;background:#fff;color:var(--ink);outline:none;font-size:13px}input:focus,select:focus,textarea:focus{border-color:#a786bd;box-shadow:0 0 0 3px #a786bd20}textarea{resize:vertical}.calculation-preview{padding:13px;border-radius:10px;background:var(--green-light);font-size:12px;line-height:1.7;color:#604873}.full{width:100%}
+.modal{border:0;border-radius:14px;padding:25px;width:min(510px,calc(100% - 28px));max-height:90vh;overflow:auto;box-shadow:0 20px 70px #0003}.modal::backdrop{background:#34243f99}.modal-heading{margin-bottom:20px}.close-btn{border:0;border-radius:7px;background:#f0f3f1;font-size:23px;width:32px;height:32px;color:#536258}.notice{padding:12px 15px;border-radius:8px;margin-bottom:15px;font-size:12px}.notice.success{background:#f0e9f6;color:#604873}.notice.error{background:#fff0f3;color:#963e60}.hidden{display:none}
+.growth-panel{margin-bottom:18px;background:linear-gradient(135deg,#fff 0%,#fcf8ff 100%)}.growth-chart{width:100%;overflow:hidden}.growth-chart svg{display:block;width:100%;height:auto;min-height:190px}.chart-empty{padding:48px 12px;text-align:center;color:#9a829f;font-size:13px;background:#fbf6fc;border:1px dashed #e6d8eb;border-radius:12px}.chart-legend{display:flex;flex-wrap:wrap;gap:20px;padding:4px 8px 0;color:#887b90;font-size:11px}.chart-legend span{display:flex;align-items:center;gap:7px}.chart-legend i{width:9px;height:9px;border-radius:50%;display:inline-block}.legend-loans{background:#9a78b8}.legend-payments{background:#d39ab8}.legend-interest{background:#7f9c91}.chart-flower{color:#c18eae;font-size:22px}.audit-entry{padding:11px 0;border-bottom:1px solid var(--line);font-size:11px;line-height:1.5}.audit-entry strong{display:block;font-size:12px}.audit-entry small{color:var(--muted)}
+.soft-note{padding:12px 14px;border-radius:11px;background:#f7f0f8;color:#765d83;font-size:11px;line-height:1.6}.flower-mark{color:#c18eae}.withdrawal-entry{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:12px}.withdrawal-entry strong{display:block;color:var(--ink)}.withdrawal-entry small{color:var(--muted)}.negative{color:#a34f70;font-weight:700}.settings-stack{display:grid;gap:18px}.delete-zone{border:1px solid #efd9e2;background:linear-gradient(135deg,#fff 0%,#fff9fc 100%)}.delete-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.delete-item{border:1px solid #f0e3eb;border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:12px}.delete-item strong{display:block;font-size:12px}.delete-item small{display:block;color:var(--muted);font-size:10px;line-height:1.5;margin-top:4px}.btn-delete{background:#fff0f4;color:#9a4667;border:1px solid #f0d4df;padding:9px 12px;border-radius:8px;font-size:11px;font-weight:700;white-space:nowrap}.btn-delete:hover{background:#fbe2eb}.delete-all{margin-top:14px;padding:16px;border-radius:12px;background:#fff0f3;border:1px solid #edcbd8;display:flex;align-items:center;justify-content:space-between;gap:14px}.delete-all strong{font-size:13px;color:#873c59}.delete-all p{font-size:11px;color:#986d7d;margin:4px 0 0;line-height:1.5}.confirm-copy{font-size:13px;line-height:1.7;color:#6f6074}.confirm-warning{padding:11px 13px;border-radius:9px;background:#fff0f3;color:#934762;font-size:11px;line-height:1.6}.confirm-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}@media(max-width:680px){.delete-grid{grid-template-columns:1fr}.delete-item{align-items:flex-start}.delete-all{align-items:flex-start;flex-direction:column}.confirm-actions{flex-direction:column-reverse}.confirm-actions button{width:100%}}
+@media(max-width:1000px){.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.two-column{grid-template-columns:1fr}}
+@media(max-width:680px){.app-shell{display:block}.sidebar{width:100%;padding:12px;display:block}.brand{margin:0 8px 12px;font-size:23px}.brand small{display:inline;margin-left:8px;font-size:8px}.sidebar nav{display:flex;overflow-x:auto;gap:5px}.nav-link{padding:10px;white-space:nowrap;font-size:11px;gap:7px}.sidebar-foot{display:none}.main-content{padding:20px 12px}.topbar{align-items:flex-start;flex-direction:column}.topbar h1{font-size:23px}.top-actions{width:100%;justify-content:space-between}.metric-grid{gap:9px}.metric-card{padding:14px}.metric-card strong{font-size:19px}.metric-card span{font-size:10px}.metric-card small{font-size:9px}.panel{padding:15px}.collection-row{flex-wrap:wrap}.collection-info{min-width:55%}.collection-amount{margin-left:auto}.wa-link{margin-left:auto}}
+
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">AAAtria<span>♡</span><small>MICROPRÉSTAMOS <i class="flower-mark">✿</i></small></div>
+      <nav>
+        <button class="nav-link active" data-view="dashboard">▦ <span>Resumen</span></button>
+        <button class="nav-link" data-view="clients">♙ <span>Clientes</span></button>
+        <button class="nav-link" data-view="loans">▤ <span>Préstamos</span></button>
+        <button class="nav-link" data-view="payments">＄ <span>Registrar pago</span></button>
+        <button class="nav-link" data-view="collections">◷ <span>Cobros del día</span></button>
+        <button class="nav-link" data-view="overdue">⚠ <span>En mora</span></button>
+        <button class="nav-link" data-view="withdrawals">♡ <span>Retiros personales</span></button>
+        <button class="nav-link" data-view="settings">⚙ <span>Auditoría y ajustes</span></button>
+      </nav>
+      <div class="sidebar-foot">Un espacio para tus finanzas ✿<br><span>Con cariño y orden · 1.2</span></div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div><p class="eyebrow">AAAtria · GESTIÓN FINANCIERA</p><h1 id="page-title">Resumen general</h1></div>
+        <div class="top-actions"><span class="today" id="today-label"></span><button class="btn btn-light" id="export-btn">↓ Exportar datos</button></div>
+      </header>
+      <div id="notice" class="notice hidden" role="status"></div>
+
+      <section class="view active" id="view-dashboard">
+        <div class="metric-grid">
+          <article class="metric-card"><span>Capital en la calle</span><strong id="metric-capital">$0.00</strong><small>Principal de préstamos activos</small></article>
+          <article class="metric-card"><span>Caja disponible</span><strong id="metric-cash">$0.00</strong><small>Dinero disponible para prestar</small></article>
+          <article class="metric-card"><span>Utilidades generadas</span><strong id="metric-profit">$0.00</strong><small>Interés efectivamente cobrado</small></article>
+          <article class="metric-card"><span>Disponible para retiro</span><strong id="metric-owner">$0.00</strong><small>20% del interés cobrado</small></article>
+        </div>
+        <article class="panel growth-panel"><div class="panel-heading"><div><p class="eyebrow">TUS NÚMEROS EN FLORECIMIENTO ✿</p><h2>Crecimiento financiero</h2><p class="hint">Comparación mensual de préstamos, pagos e intereses realmente cobrados.</p></div><span class="chart-flower">♡ ✿</span></div><div id="growth-chart" class="growth-chart" role="img" aria-label="Gráfica mensual de préstamos desembolsados, pagos recibidos e intereses cobrados"></div><div class="chart-legend"><span><i class="legend-loans"></i>Préstamos</span><span><i class="legend-payments"></i>Pagos recibidos</span><span><i class="legend-interest"></i>Intereses cobrados</span></div></article>
+        <div class="two-column">
+          <article class="panel"><div class="panel-heading"><div><p class="eyebrow">ACTIVIDAD</p><h2>Próximos cobros</h2></div><button class="text-button" data-goto="collections">Ver todos →</button></div><div id="dashboard-collections" class="empty-state">No hay cobros pendientes.</div></article>
+          <article class="panel"><div class="panel-heading"><div><p class="eyebrow">DISTRIBUCIÓN</p><h2>Intereses cobrados</h2></div><button class="btn btn-light" data-goto="withdrawals">♡ Registrar retiro</button></div><div class="split-stat"><div><span>Retiro del dueño</span><strong id="split-owner">$0.00</strong><div class="bar"><i id="bar-owner"></i></div></div><div><span>Reinversión</span><strong id="split-reinvest">$0.00</strong><div class="bar green"><i id="bar-reinvest"></i></div></div></div><p class="hint">Cada pago distribuye el interés recibido: 20% reservado para retiro personal y 80% para reinversión. Los retiros se descuentan de tu saldo disponible.</p></article>
+        </div>
+        <article class="panel"><div class="panel-heading"><div><p class="eyebrow">RESUMEN</p><h2>Últimos préstamos</h2></div><button class="btn btn-primary" data-goto="loans">+ Nuevo préstamo</button></div><div class="table-wrap"><table><thead><tr><th>Cliente</th><th>Desembolso</th><th>Principal</th><th>Total</th><th>Estado</th></tr></thead><tbody id="dashboard-loans"></tbody></table></div></article>
+      </section>
+
+      <section class="view" id="view-clients">
+        <article class="panel"><div class="panel-heading"><div><p class="eyebrow">DIRECTORIO</p><h2>Clientes registrados</h2></div><button class="btn btn-primary" id="new-client-btn">+ Nuevo cliente</button></div><div class="table-wrap"><table><thead><tr><th>Nombre</th><th>WhatsApp</th><th>Tipo</th><th>Empresa</th><th>Monto sugerido</th><th>Estado</th></tr></thead><tbody id="clients-table"></tbody></table></div></article>
+      </section>
+
+      <section class="view" id="view-loans">
+        <article class="panel"><div class="panel-heading"><div><p class="eyebrow">CARTERA</p><h2>Préstamos</h2></div><button class="btn btn-primary" id="new-loan-btn">+ Crear préstamo</button></div><div class="table-wrap"><table><thead><tr><th>Cliente</th><th>Fecha</th><th>Principal</th><th>Tasa/quincena</th><th>Total</th><th>Cuotas</th><th>Estado</th></tr></thead><tbody id="loans-table"></tbody></table></div></article>
+      </section>
+
+      <section class="view" id="view-payments">
+        <article class="panel form-panel"><p class="eyebrow">ENTRADA DE DINERO</p><h2>Registrar un pago</h2><form id="payment-form"><label>Préstamo / cuota<select id="payment-installment" required></select></label><label>Monto recibido ($)<input id="payment-amount" type="number" min="0.01" step="0.01" required></label><label>Método de pago<select id="payment-method"><option value="EFECTIVO">Efectivo</option><option value="TRANSFERENCIA">Transferencia</option></select></label><button class="btn btn-primary">Guardar pago</button></form><p class="hint">Puedes registrar abonos parciales o por cualquier monto. Primero se cubren los intereses pendientes del préstamo y todo lo restante reduce el capital. El límite es el saldo total que aún debe ese préstamo.</p></article>
+      </section>
+
+      <section class="view" id="view-collections">
+        <article class="panel"><div class="panel-heading"><div><p class="eyebrow">SEGUIMIENTO</p><h2>Cobros del día</h2></div></div><div id="today-collections" class="empty-state">No hay cobros para hoy.</div></article>
+      </section>
+
+      <section class="view" id="view-overdue">
+        <article class="panel"><div class="panel-heading"><div><p class="eyebrow">SEGUIMIENTO</p><h2>Cuotas vencidas</h2></div></div><div id="overdue-collections" class="empty-state">No hay cuotas vencidas.</div></article>
+      </section>
+
+      <section class="view" id="view-withdrawals">
+        <div class="metric-grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+          <article class="metric-card"><span>Disponible para retiro</span><strong id="withdrawal-available">$0.00</strong><small>Intereses reservados menos retiros realizados</small></article>
+          <article class="metric-card"><span>Total retirado</span><strong id="withdrawal-total">$0.00</strong><small>Retiros personales registrados</small></article>
+        </div>
+        <div class="two-column">
+          <article class="panel form-panel"><p class="eyebrow">TU DINERO, BAJO CONTROL ♡</p><h2>Registrar retiro personal</h2><p class="soft-note">Registra cualquier cantidad que retires para uso personal. Si supera el 20% reservado de los intereses cobrados, el sistema conservará el retiro y mostrará el exceso en tu saldo personal.</p><form id="withdrawal-form"><label>Monto que vas a retirar ($)<input id="withdrawal-amount" type="number" min="0.01" step="0.01" required placeholder="Ej. 25.00"></label><label>Motivo (opcional)<textarea id="withdrawal-note" rows="3" maxlength="240" placeholder="Ej. Uso personal, compra, gasto... "></textarea></label><button class="btn btn-primary">♡ Confirmar retiro</button></form><p class="hint">No hay un límite de retiro. Los retiros superiores a tu reserva quedan registrados y generan un saldo personal negativo, sin borrar movimientos ni modificar el capital prestado.</p></article>
+          <article class="panel"><p class="eyebrow">HISTORIAL PERSONAL</p><h2>Tus retiros registrados</h2><div id="withdrawal-history" class="empty-state">Todavía no has registrado retiros.</div></article>
+        </div>
+      </section>
+
+      <section class="view" id="view-settings">
+        <div class="settings-stack">
+          <div class="two-column">
+            <article class="panel form-panel"><p class="eyebrow">CAPITAL DE TRABAJO ♡</p><h2>Configurar capital inicial</h2><p class="soft-note">Puedes cambiar manualmente el monto con el que comenzaste. El ajuste se suma o resta de la caja disponible y queda anotado en auditoría; no borra préstamos ni pagos anteriores.</p><form id="capital-form"><label>Capital inicial ($)<input id="initial-capital" type="number" min="0" step="0.01" required></label><button class="btn btn-primary">Guardar capital</button></form></article>
+            <article class="panel form-panel"><p class="eyebrow">CONTROL CONTABLE</p><h2>Ajuste manual excepcional</h2><p class="hint">Los ajustes cambian la caja disponible y siempre requieren una nota de auditoría.</p><form id="adjustment-form"><label>Ajuste de caja ($)<input id="adjustment-amount" type="number" step="0.01" required placeholder="Ej. 25.00 o -10.00"></label><label>Motivo obligatorio<textarea id="adjustment-note" required minlength="12" rows="4" placeholder="Explica por qué es necesario el ajuste..."></textarea></label><button class="btn btn-danger">Registrar ajuste</button></form></article>
+            <article class="panel"><p class="eyebrow">HISTORIAL</p><h2>Registro de auditoría</h2><div id="audit-list" class="empty-state">No hay ajustes registrados.</div></article>
+          </div>
+          <article class="panel delete-zone"><div class="panel-heading"><div><p class="eyebrow">ZONA DE SEGURIDAD ♡</p><h2>Eliminar datos</h2><p class="hint">Cada acción es independiente y requiere confirmación antes de borrar. Esta herramienta no se puede deshacer.</p></div><span class="chart-flower">✿</span></div>
+            <div class="delete-grid">
+              <div class="delete-item"><div><strong>Retiros personales</strong><small>Elimina el historial de retiros y sus excesos registrados.</small></div><button class="btn-delete" data-delete="withdrawals">Eliminar</button></div>
+              <div class="delete-item"><div><strong>Pagos recibidos</strong><small>Elimina pagos y reinicia el avance de las cuotas, conservando préstamos.</small></div><button class="btn-delete" data-delete="payments">Eliminar</button></div>
+              <div class="delete-item"><div><strong>Préstamos</strong><small>Elimina préstamos, cuotas y pagos asociados. Conserva clientes.</small></div><button class="btn-delete" data-delete="loans">Eliminar</button></div>
+              <div class="delete-item"><div><strong>Clientes</strong><small>Elimina clientes y todos sus préstamos, cuotas y pagos asociados.</small></div><button class="btn-delete" data-delete="clients">Eliminar</button></div>
+              <div class="delete-item"><div><strong>Registros de mora</strong><small>Elimina los préstamos vencidos y sus cuotas y pagos asociados; no solo la etiqueta de mora.</small></div><button class="btn-delete" data-delete="overdue">Eliminar</button></div>
+              <div class="delete-item"><div><strong>Auditoría y ajustes</strong><small>Elimina el historial de auditoría y los registros de ajustes manuales.</small></div><button class="btn-delete" data-delete="audit">Eliminar</button></div>
+            </div>
+            <div class="delete-all"><div><strong>Reinicio general de AAAtria</strong><p>Elimina todos los clientes, préstamos, pagos, cuotas, retiros y auditorías. Restablece la caja y el capital al valor inicial predeterminado.</p></div><button class="btn btn-danger" id="delete-everything-btn">Eliminar todos los datos</button></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="client-dialog" class="modal">
+    <form id="client-form" method="dialog">
+      <div class="modal-heading"><div><p class="eyebrow">DIRECTORIO</p><h2>Nuevo cliente</h2></div><button type="button" class="close-btn" data-close="client-dialog">×</button></div>
+      <label>Nombre completo<input id="client-name" required maxlength="120"></label>
+      <label>Tipo de cliente<select id="client-kind" required><option value="REGULAR">Regular</option><option value="FAMILIAR">Familiar</option></select></label>
+      <label>WhatsApp internacional, solo números<input id="client-phone" required pattern="[0-9]{8,15}" placeholder="50760000000"></label>
+      <label>Empresa de trabajo<input id="client-company" maxlength="120"></label>
+      <label>Cédula de identidad<input id="client-id-number" maxlength="40"></label>
+      <label>Enlace de ubicación (opcional)<input id="client-gps" type="url" placeholder="https://maps.google.com/..."></label>
+      <label>Referencias autorizadas (opcional)<textarea id="client-references" rows="2" placeholder="Solo contactos que hayan autorizado ser referencia"></textarea></label>
+      <button class="btn btn-primary full">Guardar cliente</button>
+    </form>
+  </dialog>
+
+  <dialog id="loan-dialog" class="modal">
+    <form id="loan-form" method="dialog">
+      <div class="modal-heading"><div><p class="eyebrow">NUEVO DESEMBOLSO</p><h2>Crear préstamo</h2></div><button type="button" class="close-btn" data-close="loan-dialog">×</button></div>
+      <label>Cliente<select id="loan-client" required></select></label>
+      <label>Monto a desembolsar ($)<input id="loan-amount" type="number" min="0.01" step="0.01" required></label><p class="hint">El monto sugerido del cliente es solo una referencia. Puedes registrar un préstamo por una cantidad mayor; el sistema no lo bloqueará por ese motivo.</p>
+      <label>Modalidad<select id="loan-type"><option value="CUOTAS">Pago por cuotas</option><option value="PAGO_INMEDIATO">Pago inmediato (una quincena)</option></select></label>
+      <label>Número de quincenas (opcional)<input id="loan-count" type="number" min="1" max="24" placeholder="Déjalo vacío para pagos flexibles"></label><p class="hint">Si lo dejas vacío, no se fija un número de cuotas ni fechas de cobro: el préstamo queda con saldo abierto para recibir abonos flexibles. Se calcula inicialmente un período de interés quincenal; los intereses de períodos posteriores no se acumulan automáticamente en esta versión.</p>
+      <div class="calculation-preview" id="loan-preview">La tasa y el total se calcularán automáticamente.</div>
+      <button class="btn btn-primary full">Confirmar préstamo</button>
+    </form>
+  </dialog>
+
+  <dialog id="delete-confirm-dialog" class="modal">
+    <div class="modal-heading"><div><p class="eyebrow">CONFIRMACIÓN DE SEGURIDAD</p><h2 id="delete-confirm-title">Confirmar eliminación</h2></div><button type="button" class="close-btn" id="delete-confirm-close">×</button></div>
+    <p class="confirm-copy" id="delete-confirm-copy"></p>
+    <div class="confirm-warning" id="delete-confirm-warning">Esta acción es permanente. Exporta un respaldo antes de continuar si deseas conservar una copia.</div>
+    <div class="confirm-actions"><button type="button" class="btn btn-light" id="delete-cancel">Cancelar</button><button type="button" class="btn btn-danger" id="delete-confirm-action">Sí, eliminar</button></div>
+  </dialog>
+
+  <script>
+'use strict';
+
+/*
+ * MicroPréstamos — versión frontend sin servidor.
+ * Los datos se guardan en localStorage del navegador.
+ * No usar esta versión como sistema financiero de producción sin backend,
+ * autenticación real, controles de acceso y base de datos segura.
+ */
+const STORE_KEY = 'microprestamos_v1';
+const $ = (id) => document.getElementById(id);
+const money = (cents) => new Intl.NumberFormat('es-PA',{style:'currency',currency:'USD'}).format((cents||0)/100);
+const toCents = (value) => Math.round(Number(value)*100);
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`);
+const todayISO = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
+
+function freshState(){
+  return {cash:50000,initialCapital:50000,clients:[],loans:[],installments:[],payments:[],withdrawals:[],audit:[],createdAt:new Date().toISOString()};
+}
+function loadState(){
+  try { const saved=JSON.parse(localStorage.getItem(STORE_KEY)); if(!saved||typeof saved!=='object')return freshState(); const migrated={...freshState(),...saved}; if(!Array.isArray(migrated.withdrawals))migrated.withdrawals=[]; if(!Number.isFinite(migrated.initialCapital))migrated.initialCapital=Number.isFinite(saved.cash)?saved.cash:50000; return migrated; }
+  catch { return freshState(); }
+}
+let state=loadState();
+function save(){localStorage.setItem(STORE_KEY,JSON.stringify(state));}
+function notify(message,type='success'){
+  const box=$('notice'); box.textContent=message; box.className=`notice ${type}`;
+  window.clearTimeout(notify.timer); notify.timer=window.setTimeout(()=>box.classList.add('hidden'),4500);
+}
+function rateFor(clientKind,amountCents){
+  if(clientKind==='FAMILIAR') return 1000;
+  const amount=amountCents/100;
+  if(amount<40) return 2500;
+  if(amount>=40 && amount<=60) return 2000;
+  if(amount>=70) return 1500;
+  throw new Error('La matriz de tasas todavía no define montos mayores de $60 y menores de $70.');
+}
+function nextFortnight(date){
+  const d=new Date(date); d.setHours(12,0,0,0);
+  const last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();
+  if(d.getDate()<15)d.setDate(15);
+  else if(d.getDate()<last)d.setDate(last);
+  else{d.setDate(15);d.setMonth(d.getMonth()+1);}
+  return d;
+}
+function buildSchedule(principal,total,count,startDate){
+  if(!Number.isInteger(count)||count<1||count>24)throw new Error('El número de cuotas debe estar entre 1 y 24.');
+  const interest=total-principal;
+  const split=(amount,n)=>Array.from({length:n},(_,i)=>Math.floor(amount/n)+(i<amount%n?1:0));
+  const principals=split(principal,count),interests=split(interest,count);
+  let due=nextFortnight(startDate);
+  return Array.from({length:count},(_,i)=>{
+    if(i>0)due=nextFortnight(due);
+    return {number:i+1,principalDue:principals[i],interestDue:interests[i],amount:principals[i]+interests[i],paidAmount:0,dueDate:due.toISOString(),status:'PENDIENTE'};
+  });
+}
+function clientById(id){return state.clients.find(c=>c.id===id);}
+function installmentBalance(q){return q.amount-q.paidAmount;}
+function activeLoan(loan){return loan.status==='ACTIVO'||loan.status==='EN_ATRASO';}
+function interestCollected(){return state.payments.reduce((sum,p)=>sum+p.interestPart,0);}
+function ownerShare(){return state.payments.reduce((sum,p)=>sum+p.ownerPart,0);}
+function totalWithdrawals(){return (state.withdrawals||[]).reduce((sum,w)=>sum+w.amount,0);}
+function ownerAvailable(){return ownerShare()-totalWithdrawals();}
+function reinvestShare(){return state.payments.reduce((sum,p)=>sum+p.reinvestPart,0);}
+function updateLoanStatuses(){
+  state.loans.forEach(loan=>{
+    const qs=state.installments.filter(q=>q.loanId===loan.id);
+    if(qs.length&&qs.every(q=>q.status==='PAGADO'))loan.status='COMPLETADO';
+    else if(qs.some(q=>!q.flexible&&q.dueDate&&q.status!=='PAGADO'&&new Date(q.dueDate)<new Date(new Date().setHours(0,0,0,0))))loan.status='EN_ATRASO';
+    else loan.status='ACTIVO';
+  });
+  state.clients.forEach(c=>{
+    const late=state.installments.some(q=>!q.flexible&&q.dueDate&&q.status!=='PAGADO'&&new Date(q.dueDate)<new Date(new Date().setHours(0,0,0,0))&&state.loans.some(l=>l.id===q.loanId&&l.clientId===c.id));
+    if(c.status!=='BLOQUEADO')c.status=late?'EN_MORA':'ACTIVO';
+  });
+}
+function go(view){
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===`view-${view}`));
+  document.querySelectorAll('.nav-link').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+  const names={dashboard:'Resumen general',clients:'Clientes',loans:'Préstamos',payments:'Registrar pago',collections:'Cobros del día',overdue:'Clientes en mora',withdrawals:'Retiros personales ♡',settings:'Auditoría y ajustes'};
+  $('page-title').textContent=names[view]||'AAAtria';
+  render();
+}
+function render(){
+  updateLoanStatuses(); save();
+  const capital=state.loans.filter(activeLoan).reduce((s,l)=>s+l.principal,0);
+  $('metric-capital').textContent=money(capital);
+  $('metric-cash').textContent=money(state.cash);
+  $('metric-profit').textContent=money(interestCollected());
+  $('metric-owner').textContent=money(ownerAvailable());
+  $('split-owner').textContent=money(ownerShare());
+  $('split-reinvest').textContent=money(reinvestShare());
+  $('bar-owner').style.width=interestCollected()?`${ownerShare()/interestCollected()*100}%`:'0%';
+  $('bar-reinvest').style.width=interestCollected()?`${reinvestShare()/interestCollected()*100}%`:'0%';
+  renderClients();renderLoans();renderCollections();renderPayments();renderAudit();renderDashboard();renderGrowthChart();renderWithdrawals();$('initial-capital').value=(state.initialCapital/100).toFixed(2);
+}
+function renderClients(){
+  $('clients-table').innerHTML=state.clients.length?state.clients.map(c=>`<tr><td>${esc(c.name)}</td><td>${esc(c.phone)}</td><td>${esc(c.kind==='FAMILIAR'?'Familiar':'Regular')}</td><td>${esc(c.company||'—')}</td><td>${money(c.creditLimit)} <small style="color:var(--muted)">(referencia)</small></td><td>${statusTag(c.status)}</td></tr>`).join(''):'<tr><td colspan="6">Todavía no hay clientes registrados.</td></tr>';
+  $('loan-client').innerHTML=state.clients.filter(c=>c.status==='ACTIVO').map(c=>`<option value="${c.id}">${esc(c.name)} · Sugerencia ${money(c.creditLimit)}</option>`).join('');
+}
+function renderLoans(){
+  const rows=state.loans.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  const html=rows.map(l=>`<tr><td>${esc(clientById(l.clientId)?.name||'Cliente')}</td><td>${formatDate(l.date)}</td><td>${money(l.principal)}</td><td>${(l.rateBps/100).toFixed(2)}%</td><td>${money(l.total)}</td><td>${l.flexible?'Flexible':l.count}</td><td>${statusTag(l.status)}</td></tr>`).join('');
+  $('loans-table').innerHTML=html||'<tr><td colspan="7">No hay préstamos registrados.</td></tr>';
+}
+function statusTag(s){return `<span class="status ${s==='EN_MORA'||s==='EN_ATRASO'?'danger':''}">${esc(s)}</span>`;}
+function formatDate(d){return new Date(d).toLocaleDateString('es-PA',{day:'2-digit',month:'short',year:'numeric'});}
+function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function collectionMarkup(q){
+  const loan=state.loans.find(l=>l.id===q.loanId),client=clientById(loan?.clientId);
+  if(!client)return '';
+  const balance=installmentBalance(q),date=q.flexible?'Sin fecha fija':formatDate(q.dueDate);
+  const msg=q.status==='VENCIDO'||new Date(q.dueDate)<new Date(new Date().setHours(0,0,0,0))
+    ?`Hola ${client.name}, te contactamos para recordarte que tienes una cuota vencida por ${money(balance)} con fecha ${date}. Por favor, comunícate con nosotros para revisar el estado del pago.`
+    :`Hola ${client.name}, te recordamos que tienes una cuota por ${money(balance)} con vencimiento ${date}. Si ya realizaste el pago, puedes ignorar este mensaje. Gracias.`;
+  return `<div class="collection-row"><div class="collection-info"><strong>${esc(client.name)} · ${q.flexible?'Saldo flexible':'Cuota '+q.number}</strong><small>${q.flexible?'Sin calendario fijo':'Vence: '+date} · Saldo: ${money(balance)}</small></div><span class="collection-amount">${money(balance)}</span><a class="wa-link" href="https://wa.me/${encodeURIComponent(client.phone)}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener noreferrer">WhatsApp ↗</a></div>`;
+}
+function renderCollections(){
+  const today=todayISO();
+  const todays=state.installments.filter(q=>!q.flexible&&q.dueDate&&q.status!=='PAGADO'&&q.dueDate.slice(0,10)===today);
+  const overdue=state.installments.filter(q=>!q.flexible&&q.dueDate&&q.status!=='PAGADO'&&q.dueDate.slice(0,10)<today);
+  $('today-collections').innerHTML=todays.map(collectionMarkup).join('')||'<div class="empty-state">No hay cobros para hoy.</div>';
+  $('dashboard-collections').innerHTML=todays.slice(0,5).map(collectionMarkup).join('')||'<div class="empty-state">No hay cobros pendientes para hoy.</div>';
+  $('overdue-collections').innerHTML=overdue.map(collectionMarkup).join('')||'<div class="empty-state">No hay cuotas vencidas.</div>';
+}
+function renderPayments(){
+  const pending=state.installments.filter(q=>q.status!=='PAGADO');
+  $('payment-installment').innerHTML=pending.map(q=>{
+    const l=state.loans.find(x=>x.id===q.loanId),c=clientById(l?.clientId);
+    const loanQs=state.installments.filter(x=>x.loanId===l?.id);const outstanding=loanQs.reduce((sum,x)=>sum+installmentBalance(x),0);return `<option value="${q.id}">${esc(c?.name||'Cliente')} · ${q.flexible?'Saldo flexible':'Cuota '+q.number} · Deuda total ${money(outstanding)}${q.dueDate?' · '+formatDate(q.dueDate):''}</option>`;
+  }).join('');
+  $('payment-installment').disabled=!pending.length;
+  $('payment-form').querySelector('button').disabled=!pending.length;
+}
+function renderAudit(){
+  $('audit-list').innerHTML=state.audit.slice().reverse().map(a=>`<div class="audit-entry"><strong>${esc(a.title)} · ${money(a.amount)}</strong>${esc(a.note)}<br><small>${new Date(a.date).toLocaleString('es-PA')}</small></div>`).join('')||'<div class="empty-state">No hay ajustes registrados.</div>';
+}
+function renderWithdrawals(){
+  const withdrawals=state.withdrawals||[];
+  $('withdrawal-available').textContent=money(ownerAvailable());
+  $('withdrawal-total').textContent=money(totalWithdrawals());
+  $('withdrawal-history').innerHTML=withdrawals.length?withdrawals.slice().reverse().map(w=>`<div class="withdrawal-entry"><div><strong>${esc(w.note||'Retiro personal')}</strong><small>${new Date(w.date).toLocaleString('es-PA')}${w.excess>0?` · Exceso: ${money(w.excess)}`:''}</small></div><span class="negative">−${money(w.amount)}</span></div>`).join(''):'<div class="empty-state">Todavía no has registrado retiros.</div>'
+}
+function renderGrowthChart(){
+  const host=$('growth-chart');if(!host)return;
+  const now=new Date(),months=[];
+  for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push({key:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,label:d.toLocaleDateString('es-PA',{month:'short'}),loans:0,payments:0,interest:0});}
+  const byKey=Object.fromEntries(months.map(m=>[m.key,m]));
+  const keyOf=date=>{const d=new Date(date);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;};
+  state.loans.forEach(l=>{const m=byKey[keyOf(l.date)];if(m)m.loans+=l.principal||0;});
+  state.payments.forEach(p=>{const m=byKey[keyOf(p.date)];if(m){m.payments+=p.received||0;m.interest+=p.interestPart||0;}});
+  const max=Math.max(1,...months.flatMap(m=>[m.loans,m.payments,m.interest]));
+  const W=760,H=245,L=58,R=18,T=18,B=42,plotW=W-L-R,plotH=H-T-B;
+  const x=i=>L+(months.length===1?plotW/2:i*plotW/(months.length-1));
+  const y=v=>T+plotH-(v/max)*plotH;
+  const grid=[0,.25,.5,.75,1].map(t=>{const yy=T+plotH-t*plotH;return `<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="#eee5f1" stroke-dasharray="4 5"/><text x="${L-10}" y="${yy+4}" text-anchor="end" fill="#9a8ca0" font-size="10">${Math.round(max*t/100)/10}k</text>`;}).join('');
+  const series=[['loans','#9a78b8'],['payments','#d39ab8'],['interest','#7f9c91']];
+  const lines=series.map(([k,color])=>{const pts=months.map((m,i)=>`${x(i)},${y(m[k])}`).join(' ');const dots=months.map((m,i)=>`<circle cx="${x(i)}" cy="${y(m[k])}" r="4" fill="${color}" stroke="#fff" stroke-width="2"><title>${m.label}: ${money(m[k])}</title></circle>`).join('');return `<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${dots}`;}).join('');
+  const labels=months.map((m,i)=>`<text x="${x(i)}" y="${H-12}" text-anchor="middle" fill="#8e8095" font-size="11">${m.label}</text>`).join('');
+  if(!state.loans.length&&!state.payments.length){host.innerHTML='<div class="chart-empty">Cuando registres préstamos y pagos, aquí florecerá tu gráfica de crecimiento ♡</div>';return;}
+  host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución mensual en dólares"><title>Préstamos desembolsados, pagos recibidos e intereses cobrados</title>${grid}${lines}${labels}</svg>`;
+}
+function renderDashboard(){
+  $('dashboard-loans').innerHTML=state.loans.slice(-5).reverse().map(l=>`<tr><td>${esc(clientById(l.clientId)?.name||'Cliente')}</td><td>${formatDate(l.date)}</td><td>${money(l.principal)}</td><td>${money(l.total)}</td><td>${statusTag(l.status)}</td></tr>`).join('')||'<tr><td colspan="5">No hay préstamos registrados.</td></tr>';
+}
+function openDialog(id){if(id==='loan-dialog'&&!state.clients.length){notify('Primero debes registrar un cliente.','error');go('clients');return;}$(id).showModal();}
+function createClient(e){
+  e.preventDefault();
+  const name=$('client-name').value.trim(),phone=$('client-phone').value.trim();
+  if(!/^\d{8,15}$/.test(phone)){notify('El WhatsApp debe contener entre 8 y 15 dígitos, sin signos.','error');return;}
+  state.clients.push({id:uid(),name,phone,kind:$('client-kind').value,company:$('client-company').value.trim(),identity:$('client-id-number').value.trim(),gps:$('client-gps').value.trim(),references:$('client-references').value.trim(),creditLimit:10000,status:'ACTIVO',createdAt:new Date().toISOString()});
+  save();$('client-dialog').close();$('client-form').reset();render();notify('Cliente registrado correctamente.');
+}
+function previewLoan(){
+  const amount=Number($('loan-amount').value),mode=$('loan-type').value,rawCount=$('loan-count').value.trim(),count=mode==='PAGO_INMEDIATO'?1:(rawCount===''?1:Number(rawCount)),flexible=mode!=='PAGO_INMEDIATO'&&rawCount==='',client=clientById($('loan-client').value);
+  $('loan-count').disabled=mode==='PAGO_INMEDIATO';
+  if(!amount||amount<=0){$('loan-preview').textContent='La tasa y el total se calcularán automáticamente.';return;}
+  try{if(!client){$('loan-preview').textContent='Selecciona un cliente para calcular su tasa.';return;}const principal=toCents(amount),rate=rateFor(client.kind||'REGULAR',principal),interest=Math.round(principal*rate/10000*count);$('loan-preview').innerHTML=`Tipo: <strong>${client.kind==='FAMILIAR'?'Familiar':'Regular'}</strong><br>Tasa por quincena: <strong>${(rate/100).toFixed(2)}%</strong><br>Interés inicial (${flexible?'1 quincena':count+' quincena(s)'}): <strong>${money(interest)}</strong><br>Total inicial: <strong>${money(principal+interest)}</strong><br>${flexible?'Modalidad: <strong>Saldo abierto · abonos flexibles</strong>':'Cuotas: <strong>'+count+'</strong>'}`;}
+  catch(err){$('loan-preview').textContent=err.message;}
+}
+function createLoan(e){
+  e.preventDefault();
+  try{
+    const client=clientById($('loan-client').value),principal=toCents($('loan-amount').value),mode=$('loan-type').value,rawCount=$('loan-count').value.trim(),flexible=mode!=='PAGO_INMEDIATO'&&rawCount==='',count=mode==='PAGO_INMEDIATO'?1:(flexible?1:Number(rawCount)),rate=rateFor(client?.kind||'REGULAR',principal);
+    if(!client)throw new Error('Selecciona un cliente.');
+    if(client.status!=='ACTIVO')throw new Error('El cliente no está activo.');
+    if(state.cash<principal)throw new Error('La caja disponible es insuficiente.');
+    const interest=Math.round(principal*rate/10000*count),total=principal+interest,date=new Date();
+    const loan={id:uid(),clientId:client.id,principal,type:mode,clientKind:client.kind||'REGULAR',rateBps:rate,interest,total,count:flexible?null:count,flexible,date:date.toISOString(),status:'ACTIVO'};
+    const schedule=buildSchedule(principal,total,count,date).map(q=>({...q,id:uid(),loanId:loan.id,flexible,dueDate:flexible?null:q.dueDate}));
+    state.cash-=principal;state.loans.push(loan);state.installments.push(...schedule);
+    save();$('loan-dialog').close();$('loan-form').reset();render();notify('Préstamo creado y calendario generado.');
+  }catch(err){notify(err.message,'error');}
+}
+function registerPayment(e){
+  e.preventDefault();
+  const selected=state.installments.find(x=>x.id===$('payment-installment').value);
+  if(!selected){notify('No hay un préstamo pendiente seleccionado.','error');return;}
+  try{
+    const received=toCents($('payment-amount').value);
+    if(received<=0)throw new Error('El monto debe ser mayor que cero.');
+    const loanQs=state.installments.filter(x=>x.loanId===selected.loanId).sort((a,b)=>new Date(a.dueDate)-new Date(b.dueDate));
+    const totalOutstanding=loanQs.reduce((sum,q)=>sum+installmentBalance(q),0);
+    if(received>totalOutstanding)throw new Error(`El abono supera la deuda total del préstamo (${money(totalOutstanding)}).`);
+    const interestPaidFor=(q)=>state.payments.reduce((sum,p)=>{
+      if(Array.isArray(p.allocations)){const a=p.allocations.find(x=>x.installmentId===q.id);return sum+(a?.interestPart||0);}
+      return sum+(p.installmentId===q.id?(p.interestPart||0):0);
+    },0);
+    let remaining=received,interestPart=0,principalPart=0;
+    const allocations=[];
+    // Primero se cubren todos los intereses pendientes del préstamo, en orden de vencimiento.
+    for(const q of loanQs){
+      if(remaining<=0)break;
+      const outstandingInterest=Math.max(0,q.interestDue-interestPaidFor(q));
+      const applied=Math.min(remaining,outstandingInterest);
+      if(applied){allocations.push({installmentId:q.id,interestPart:applied,principalPart:0});interestPart+=applied;remaining-=applied;}
+    }
+    // Una vez cubiertos los intereses, el excedente reduce el capital pendiente.
+    for(const q of loanQs){
+      if(remaining<=0)break;
+      const alreadyPrincipal=state.payments.reduce((sum,p)=>{
+        if(Array.isArray(p.allocations)){const a=p.allocations.find(x=>x.installmentId===q.id);return sum+(a?.principalPart||0);}
+        return sum+(p.installmentId===q.id?(p.principalPart||0):0);
+      },0);
+      const principalOutstanding=Math.max(0,q.principalDue-alreadyPrincipal);
+      const applied=Math.min(remaining,principalOutstanding);
+      if(applied){let a=allocations.find(x=>x.installmentId===q.id);if(!a){a={installmentId:q.id,interestPart:0,principalPart:0};allocations.push(a);}a.principalPart+=applied;principalPart+=applied;remaining-=applied;}
+    }
+    if(remaining>0)throw new Error('No se pudo distribuir el monto completo; revisa el saldo del préstamo.');
+    allocations.forEach(a=>{const q=state.installments.find(x=>x.id===a.installmentId);q.paidAmount+=a.interestPart+a.principalPart;q.status=q.paidAmount>=q.amount?'PAGADO':'PAGADO_PARCIAL';});
+    const ownerPart=Math.ceil(interestPart*0.20),reinvestPart=interestPart-ownerPart;
+    const payment={id:uid(),installmentId:selected.id,allocations,received,interestPart,principalPart,ownerPart,reinvestPart,method:$('payment-method').value,date:new Date().toISOString()};
+    state.cash+=principalPart+reinvestPart;state.payments.push(payment);
+    save();$('payment-form').reset();render();notify(`Pago registrado. Intereses: ${money(interestPart)} · Capital: ${money(principalPart)}.`);
+  }catch(err){notify(err.message,'error');}
+}
+function createAdjustment(e){
+  e.preventDefault();
+  const amount=Number($('adjustment-amount').value),note=$('adjustment-note').value.trim();
+  if(!Number.isFinite(amount)||amount===0){notify('El ajuste debe ser distinto de cero.','error');return;}
+  if(note.length<12){notify('Escribe una nota de auditoría de al menos 12 caracteres.','error');return;}
+  const cents=toCents(Math.abs(amount))*(amount<0?-1:1);
+  if(state.cash+cents<0){notify('El ajuste dejaría la caja en negativo.','error');return;}
+  state.cash+=cents;state.audit.push({id:uid(),title:'Ajuste manual de caja',amount:cents,note,date:new Date().toISOString()});
+  save();$('adjustment-form').reset();render();notify('Ajuste registrado en el historial de auditoría.');
+}
+function saveInitialCapital(e){
+  e.preventDefault();
+  const next=toCents($('initial-capital').value);
+  if(!Number.isFinite(next)||next<0){notify('El capital inicial debe ser cero o mayor.','error');return;}
+  const difference=next-(state.initialCapital||0);
+  if(state.cash+difference<0){notify('Ese cambio dejaría la caja disponible en negativo.','error');return;}
+  state.initialCapital=next;state.cash+=difference;
+  state.audit.push({id:uid(),title:'Cambio de capital inicial',amount:difference,note:`Capital inicial actualizado a ${money(next)}. Ajuste aplicado a caja disponible.`,date:new Date().toISOString()});
+  save();render();notify('Capital inicial actualizado y registrado en auditoría.');
+}
+function registerWithdrawal(e){
+  e.preventDefault();
+  const amount=toCents($('withdrawal-amount').value),note=$('withdrawal-note').value.trim();
+  if(!Number.isFinite(amount)||amount<=0){notify('El retiro debe ser mayor que cero.','error');return;}
+  const before=ownerAvailable();
+  const withdrawal={id:uid(),amount,note:note||'Retiro personal',date:new Date().toISOString(),availableBefore:before,excess:Math.max(0,amount-before)};
+  state.withdrawals.push(withdrawal);
+  state.audit.push({id:uid(),title:'Retiro personal',amount:-amount,note:withdrawal.note,date:withdrawal.date});
+  save();$('withdrawal-form').reset();render();notify(`Retiro registrado: ${money(amount)}.${withdrawal.excess?` Exceso sobre la reserva: ${money(withdrawal.excess)}.`:''}`);
+}
+
+const DELETE_ACTIONS={
+  withdrawals:{title:'Eliminar retiros personales',copy:'Se eliminarán todos los retiros personales registrados y sus notas. Los préstamos y pagos permanecerán intactos.',warning:'El disponible para retiro se volverá a calcular sin esos retiros.'},
+  payments:{title:'Eliminar pagos recibidos',copy:'Se eliminará el historial completo de pagos y se reiniciará el avance de las cuotas. Los clientes y préstamos se conservarán.',warning:'La caja disponible no se modificará; esta acción elimina el registro histórico de pagos, no revierte movimientos de dinero.'},
+  loans:{title:'Eliminar todos los préstamos',copy:'Se eliminarán todos los préstamos, sus cuotas y los pagos asociados. Los clientes permanecerán registrados.',warning:'La caja disponible no se modificará. Revisa y exporta un respaldo antes de continuar.'},
+  clients:{title:'Eliminar todos los clientes',copy:'Se eliminarán todos los clientes y, junto con ellos, sus préstamos, cuotas y pagos asociados.',warning:'La caja disponible y los retiros personales no se modificarán.'},
+  overdue:{title:'Eliminar préstamos en mora',copy:'Se eliminarán los préstamos que actualmente estén marcados como EN_ATRASO, junto con sus cuotas y pagos asociados. Los clientes se conservarán.',warning:'Esto elimina la deuda y su historial dentro de AAAtria. No es simplemente quitar una etiqueta de mora.'},
+  audit:{title:'Eliminar auditoría y ajustes',copy:'Se borrarán todas las entradas del historial de auditoría, incluidos los registros de ajustes manuales y cambios de capital.',warning:'No se modificará la caja ni el capital configurado; solo se eliminará el historial.'},
+  all:{title:'Reiniciar AAAtria por completo',copy:'Se eliminarán todos los clientes, préstamos, cuotas, pagos, retiros y registros de auditoría. La aplicación volverá a su estado inicial.',warning:'Esta acción no se puede deshacer. Descarga primero un respaldo desde «Exportar datos» si quieres conservar la información.'}
+};
+let pendingDelete=null;
+function openDeleteConfirmation(action){
+  const config=DELETE_ACTIONS[action];if(!config)return;
+  pendingDelete=action;
+  $('delete-confirm-title').textContent=config.title;
+  $('delete-confirm-copy').textContent=config.copy;
+  $('delete-confirm-warning').textContent=config.warning;
+  $('delete-confirm-action').textContent=action==='all'?'Sí, reiniciar todo':'Sí, eliminar';
+  $('delete-confirm-dialog').showModal();
+}
+function removeLoansByIds(ids){
+  const idSet=new Set(ids);
+  const loanSet=new Set(state.loans.filter(l=>idSet.has(l.id)).map(l=>l.id));
+  const installmentSet=new Set(state.installments.filter(q=>loanSet.has(q.loanId)).map(q=>q.id));
+  state.payments=state.payments.filter(p=>!loanSet.has(state.installments.find(q=>q.id===p.installmentId)?.loanId)&&!(p.allocations||[]).some(a=>installmentSet.has(a.installmentId)));
+  state.installments=state.installments.filter(q=>!loanSet.has(q.loanId));
+  state.loans=state.loans.filter(l=>!loanSet.has(l.id));
+}
+function performDelete(action){
+  if(action==='all'){
+    state=freshState();save();go('dashboard');notify('AAAtria se reinició. Todos los datos fueron eliminados correctamente.');return;
+  }
+  if(action==='withdrawals')state.withdrawals=[];
+  if(action==='payments'){
+    state.payments=[];
+    state.installments.forEach(q=>{q.paidAmount=0;q.status='PENDIENTE';});
+    state.loans.forEach(l=>l.status='ACTIVO');
+  }
+  if(action==='loans')removeLoansByIds(state.loans.map(l=>l.id));
+  if(action==='clients'){
+    const clientIds=new Set(state.clients.map(c=>c.id));
+    removeLoansByIds(state.loans.filter(l=>clientIds.has(l.clientId)).map(l=>l.id));
+    state.clients=[];
+  }
+  if(action==='overdue'){
+    const overdueIds=state.loans.filter(l=>l.status==='EN_ATRASO'||state.installments.some(q=>q.loanId===l.id&&!q.flexible&&q.status!=='PAGADO'&&q.dueDate&&new Date(q.dueDate)<new Date(new Date().setHours(0,0,0,0)))).map(l=>l.id);
+    removeLoansByIds(overdueIds);
+  }
+  if(action==='audit')state.audit=[];
+  if(action!=='audit')state.audit.push({id:uid(),title:`Eliminación de datos: ${DELETE_ACTIONS[action].title}`,amount:0,note:'Acción confirmada por la usuaria desde Zona de seguridad.',date:new Date().toISOString()});
+  updateLoanStatuses();save();go('settings');notify(`${DELETE_ACTIONS[action].title}: operación completada.`);
+}
+function confirmDelete(){
+  if(!pendingDelete)return;
+  const action=pendingDelete;pendingDelete=null;
+  $('delete-confirm-dialog').close();
+  performDelete(action);
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`microprestamos-respaldo-${todayISO()}.json`;a.click();URL.revokeObjectURL(url);
+}
+function init(){
+  $('today-label').textContent=new Date().toLocaleDateString('es-PA',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
+  document.querySelectorAll('.nav-link').forEach(b=>b.addEventListener('click',()=>go(b.dataset.view)));
+  document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.goto)));
+  $('new-client-btn').addEventListener('click',()=>openDialog('client-dialog'));
+  $('new-loan-btn').addEventListener('click',()=>openDialog('loan-dialog'));
+  document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>$(b.dataset.close).close()));
+  $('client-form').addEventListener('submit',createClient);
+  $('loan-form').addEventListener('submit',createLoan);
+  $('payment-form').addEventListener('submit',registerPayment);
+  $('adjustment-form').addEventListener('submit',createAdjustment);
+  $('capital-form').addEventListener('submit',saveInitialCapital);
+  $('withdrawal-form').addEventListener('submit',registerWithdrawal);
+  ['loan-amount','loan-type','loan-count','loan-client'].forEach(id=>$(id).addEventListener('input',previewLoan));
+  $('loan-type').addEventListener('change',previewLoan);$('loan-client').addEventListener('change',previewLoan);
+  $('export-btn').addEventListener('click',exportData);
+  document.querySelectorAll('[data-delete]').forEach(b=>b.addEventListener('click',()=>openDeleteConfirmation(b.dataset.delete)));
+  $('delete-everything-btn').addEventListener('click',()=>openDeleteConfirmation('all'));
+  $('delete-confirm-action').addEventListener('click',confirmDelete);
+  $('delete-cancel').addEventListener('click',()=>{$('delete-confirm-dialog').close();pendingDelete=null;});
+  $('delete-confirm-close').addEventListener('click',()=>{$('delete-confirm-dialog').close();pendingDelete=null;});
+  render();
+}
+document.addEventListener('DOMContentLoaded',init);
+
+  </script>
+</body>
+</html>
